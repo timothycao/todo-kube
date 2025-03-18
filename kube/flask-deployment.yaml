@@ -7,6 +7,11 @@ spec:
   selector:
     matchLabels:
       app: flask-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1   # Allow 1 unavailable pod during rollout (at least 2 running pods at all times for replicas: 3)
+      maxSurge: 1         # Allow 1 extra pod during rollout (potentially 4 running pods for replicas: 3)
   template:
     metadata:
       labels:
@@ -22,3 +27,29 @@ spec:
           value: "mongo-service"
         - name: MONGO_PORT
           value: "27017"
+
+# # Part 5: Replication controller (redundant)
+# ---
+# apiVersion: v1
+# kind: ReplicationController
+# metadata:
+#   name: flask-replication-controller
+# spec:
+#   replicas: 3
+#   selector:
+#     app: flask-app
+#   template:
+#     metadata:
+#       labels:
+#         app: flask-app
+#     spec:
+#       containers:
+#       - name: flask-app
+#         image: tc4088/todo-kube:latest
+#         ports:
+#         - containerPort: 5000
+#         env:
+#         - name: MONGO_HOST
+#           value: "mongo-service"
+#         - name: MONGO_PORT
+#           value: "27017"

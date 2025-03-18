@@ -3,6 +3,7 @@ from pymongo import MongoClient # Database connector
 from bson.objectid import ObjectId # For ObjectId to work
 from bson.errors import InvalidId # For catching InvalidId exception for ObjectId
 import os
+import time
 
 # Environment variables with fallback defaults
 mongodb_host = os.environ.get('MONGO_HOST', 'localhost')
@@ -124,6 +125,12 @@ def about():
 	return render_template('credits.html',t=title,h=heading)
 
 if __name__ == "__main__":
+    # For testing liveness and readiness probes
+	flask_failure = os.environ.get("FLASK_FAILURE", "False").lower() == "true"
+	if flask_failure:
+		print('Simulating application failure...')
+		while True: time.sleep(1)
+
 	flask_env = os.environ.get('FLASK_ENV', 'development')
 	flask_host = os.environ.get('FLASK_HOST', '0.0.0.0')
 	flask_port = int(os.environ.get('FLASK_PORT', '5000'))

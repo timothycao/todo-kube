@@ -21,12 +21,30 @@ spec:
       - name: flask-app
         image: tc4088/todo-kube:latest
         ports:
-        - containerPort: 5000
+        - name: http-port
+          containerPort: 5000
         env:
         - name: MONGO_HOST
           value: "mongo-service"
         - name: MONGO_PORT
           value: "27017"
+        # # For testing liveness and readiness probes
+        # - name: FLASK_FAILURE
+        #   value: "True"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http-port
+          initialDelaySeconds: 5  # Wait 5s before first check
+          periodSeconds: 10       # Check every 10s
+          failureThreshold: 3     # Restart pod if it fails 3 times in a row        
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http-port
+          initialDelaySeconds: 5  # Wait 5s before first check
+          periodSeconds: 5        # Check every 5s
+          failureThreshold: 3     # Mark pod as unhealthy (not ready) if it fails 3 times
 
 # # Part 5: Replication controller (redundant)
 # ---

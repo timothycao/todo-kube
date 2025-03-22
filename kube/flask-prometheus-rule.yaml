@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: flask-prometheus-rule
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: flask-probe
+      rules:
+        - alert: LivenessProbeFailures
+          expr: kube_pod_container_status_last_terminated_reason{reason="Error", container="flask-app"} > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Flask app liveness probe failure"
+            description: "Pod {{ $labels.pod }} has failed liveness probe."
+
+        - alert: ReadinessProbeFailures
+          expr: kube_pod_container_status_ready{container="flask-app"} == 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Flask app readiness probe failure"
+            description: "Pod {{ $labels.pod }} has failed readiness probe."

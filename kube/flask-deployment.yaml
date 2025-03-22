@@ -35,14 +35,14 @@ spec:
           httpGet:
             path: /
             port: http-port
-          initialDelaySeconds: 5  # Wait 5s before first check
+          initialDelaySeconds: 20 # Wait 20s before first check
           periodSeconds: 10       # Check every 10s
           failureThreshold: 3     # Restart pod if it fails 3 times in a row        
         readinessProbe:
           httpGet:
             path: /
             port: http-port
-          initialDelaySeconds: 5  # Wait 5s before first check
+          initialDelaySeconds: 20 # Wait 20s before first check
           periodSeconds: 5        # Check every 5s
           failureThreshold: 3     # Mark pod as unhealthy (not ready) if it fails 3 times
 
